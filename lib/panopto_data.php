@@ -998,15 +998,18 @@ class panopto_data {
             // Only try to sync the users if he Panopto server is up.
             if (self::is_server_alive('https://' . $this->servername . '/Panopto')) {
 
-                $this->ensure_user_manager($userinfo->username);
-
-                $this->usermanager->sync_external_user(
-                    $userinfo->firstname,
-                    $userinfo->lastname,
-                    $userinfo->email,
-                    $groupstosync,
-                    $userinfo->username
-                );
+                try {
+                    $this->ensure_user_manager($userinfo->username);
+                    $this->usermanager->sync_external_user(
+                        $userinfo->firstname,
+                        $userinfo->lastname,
+                        $userinfo->email,
+                        $groupstosync,
+                        $userinfo->username
+                    );
+                } catch (Exception $e) {
+                    self::print_log(get_string('panopto_sync_external_user_error', 'block_panopto', $e->getMessage()));
+                }
             } else {
                 self::print_log(get_string('panopto_server_error', 'block_panopto', $this->servername));
             }

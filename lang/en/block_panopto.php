@@ -225,6 +225,7 @@ $string['panopto:provision_asteacher'] = 'Provision as a teacher';
 $string['panopto:provision_course'] = 'Provision a course';
 $string['panopto:provision_multiple'] = 'Provision multiple courses at once';
 $string['panopto_course_tool'] = 'Panopto Course Tool';
+$string['panopto_sync_external_user_error'] = 'Could not sync panopto user: {$a}.';
 $string['panopto_server_error'] = 'Panopto server {$a} returned with server error, will try again on next sign in.';
 $string['pluginname'] = 'Panopto';
 $string['podcast_audio'] = 'Audio podcast';
