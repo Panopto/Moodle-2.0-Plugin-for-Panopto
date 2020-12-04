@@ -1008,7 +1008,13 @@ class panopto_data {
                         $userinfo->username
                     );
                 } catch (Exception $e) {
-                    self::print_log(get_string('panopto_sync_external_user_error', 'block_panopto', $e->getMessage()));
+                    $errormessage = 'User ID: ' . $userinfo->id;
+                    if (count($groupstosync) > 0) {
+                        $errormessage .= ' | Groups to sync: ' . implode(",", $groupstosync);
+                    }
+
+                    $errormessage .= '| Error:' . $e->getMessage();
+                    self::print_log(get_string('panopto_sync_external_user_error', 'block_panopto', $errormessage));
                 }
             } else {
                 self::print_log(get_string('panopto_server_error', 'block_panopto', $this->servername));
