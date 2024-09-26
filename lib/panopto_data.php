@@ -1005,7 +1005,7 @@ class panopto_data {
                         $userinfo->lastname,
                         $userinfo->email,
                         $groupstosync,
-                        $userinfo->username
+                        panopto_convert_user_to_send($userinfo)
                     );
                 } catch (Exception $e) {
                     $errormessage = 'User ID: ' . $userinfo->id;
