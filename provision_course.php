@@ -36,8 +36,8 @@ require_once(dirname(__FILE__) . '/lib/block_panopto_lib.php');
 global $courses;
 
 // Populate list of servernames to select from.
-$aserverarray = array();
-$appkeyarray = array();
+$aserverarray = [];
+$appkeyarray = [];
 
 $numservers = get_config('block_panopto', 'server_number');
 $numservers = isset($numservers) ? $numservers : 0;
@@ -101,7 +101,7 @@ if ($mform->is_cancelled()) {
         // Course context.
         require_capability('block/panopto:provision_course', $context);
 
-        $courses = array($courseidparam);
+        $courses = [$courseidparam];
         $editcourseurl = new moodle_url($returnurl);
         $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $editcourseurl);
     } else {

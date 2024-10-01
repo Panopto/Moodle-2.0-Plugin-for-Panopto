@@ -56,9 +56,9 @@ class block_panopto_categorytasks {
         if (get_config('block_panopto', 'enforce_category_structure')) {
 
             $task = new \block_panopto\task\ensure_category();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'categoryid' => $event->contextinstanceid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);
@@ -82,9 +82,9 @@ class block_panopto_categorytasks {
         if (get_config('block_panopto', 'enforce_category_structure')) {
 
             $task = new \block_panopto\task\ensure_category();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'categoryid' => $event->contextinstanceid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);

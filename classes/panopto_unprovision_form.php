@@ -46,7 +46,7 @@ class panopto_unprovision_form extends moodleform {
         $coursesraw = $DB->get_records_sql(
             'SELECT id, shortname, fullname FROM {course} WHERE id IN (SELECT moodleid FROM {block_panopto_foldermap})'
         );
-        $courses = array();
+        $courses = [];
         if ($coursesraw) {
             foreach ($coursesraw as $course) {
                 $courses[$course->id] = $course->shortname . ': ' . $course->fullname;

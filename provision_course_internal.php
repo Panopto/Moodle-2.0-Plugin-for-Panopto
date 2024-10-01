@@ -36,8 +36,8 @@ require_once(dirname(__FILE__) . '/lib/panopto_data.php');
 global $courses;
 
 // Populate list of servernames to select from.
-$aserverarray = array();
-$appkeyarray = array();
+$aserverarray = [];
+$appkeyarray = [];
 
 $numservers = get_config('block_panopto', 'server_number');
 $numservers = isset($numservers) ? $numservers : 0;

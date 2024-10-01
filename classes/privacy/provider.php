@@ -123,7 +123,7 @@ class provider implements
         }
 
         $enrolledusers = \get_enrolled_users($context);
-        $enrolleduserids = array();
+        $enrolleduserids = [];
         foreach ($enrolledusers as $user) {
             $enrolleduserids[] = $user->id;
         }
@@ -155,7 +155,7 @@ class provider implements
                 \panopto_user_info_valid($panoptouser->FirstName) &&
                 \panopto_user_info_valid($panoptouser->LastName) &&
                 \panopto_user_info_valid($panoptouser->Email)) {
-                $subcontext = array();
+                $subcontext = [];
                 $subcontext[] = \get_string('pluginname', 'block_panopto');
                 $subcontext[] = $currentpanopto->servername;
 
@@ -184,7 +184,7 @@ class provider implements
             $currentpanopto->servername = $panoptoserver->name;
             $currentpanopto->applicationkey = $panoptoserver->appkey;
 
-            $userids = array();
+            $userids = [];
             foreach ($targetusers as $targetuser) {
                 // Search for user in panopto, if they exist then export the below data, if they do not exist then skip.
                 $panoptouser = $currentpanopto->get_user_by_key($instancename . '\\' . $targetuser->username);

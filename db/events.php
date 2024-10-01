@@ -24,55 +24,55 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = array(
-    array(
+$observers = [
+    [
         'eventname' => '\core\event\course_created',
         'callback' => 'block_panopto_rollingsync::coursecreated',
-    ),
+    ],
     // Event when a course is imported or backed up.
-    array(
+    [
         'eventname' => '\core\event\course_restored',
         'callback' => 'block_panopto_rollingsync::courserestored',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_deleted',
         'callback' => 'block_panopto_rollingsync::coursedeleted',
-    ),
+    ],
     // User unenroled event.
-    array(
+    [
         'eventname' => '\core\event\user_enrolment_deleted',
         'callback' => 'block_panopto_rollingsync::userenrolmentdeleted',
-    ),
+    ],
     // User unenroled event.
-    array(
+    [
         'eventname' => '\core\event\user_enrolment_updated',
         'callback' => 'block_panopto_rollingsync::userenrolmentupdated',
-    ),
+    ],
     // User enroled event.
-    array(
+    [
         'eventname' => '\core\event\role_assigned',
         'callback' => 'block_panopto_rollingsync::roleassigned',
-    ),
+    ],
     // User Enrollment changed event.
-    array(
+    [
         'eventname' => '\core\event\role_unassigned',
         'callback' => 'block_panopto_rollingsync::roleunassigned',
-    ),
+    ],
     // User loggedin and loggedinas  events.
-    array(
+    [
         'eventname' => '\core\event\user_loggedin',
         'callback' => 'block_panopto_rollingsync::userloggedin',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_loggedinas',
         'callback' => 'block_panopto_rollingsync::userloggedinas',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_category_updated',
         'callback' => 'block_panopto_categorytasks::coursecategoryupdated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_category_created',
         'callback' => 'block_panopto_categorytasks::coursecategorycreated',
-    )
-);
+    ]
+];

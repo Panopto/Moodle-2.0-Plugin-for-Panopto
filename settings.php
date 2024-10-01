@@ -87,7 +87,7 @@ if ($ADMIN->fulltree) {
 
     // The next setting requires a Panopto server and appkey combo to be properly set.
     if (!isset($targetserverarray) || empty($targetserverarray)) {
-        $targetserverarray = array(get_string('add_a_panopto_server', 'block_panopto'));
+        $targetserverarray = [get_string('add_a_panopto_server', 'block_panopto')];
     }
 
     $settings->add(
@@ -190,6 +190,17 @@ if ($ADMIN->fulltree) {
         )
     );
 
+    $possiblecopyprovisiontypes = \panopto_data::getpossiblecopyprovisiontypes();
+    $settings->add(
+        new admin_setting_configselect(
+            'block_panopto/provisioning_during_copy',
+            get_string('block_panopto_copy_provision', 'block_panopto'),
+            get_string('block_panopto_copy_provision_desc', 'block_panopto'),
+            'both',
+            $possiblecopyprovisiontypes
+        )
+    );
+
     $settings->add(
         new admin_setting_configcheckbox(
             'block_panopto/auto_insert_lti_link_to_new_courses',
@@ -264,7 +275,7 @@ if ($ADMIN->fulltree) {
         'block_panopto/publisher_system_role_mapping',
         get_string('block_panopto_publisher_system_role_mapping', 'block_panopto'),
         get_string('block_panopto_publisher_system_role_mapping_desc', 'block_panopto'),
-        array(),
+        [],
         $systemrolearray
     );
     $systempublishersetting->set_updatedcallback('panopto_update_system_publishers');
@@ -279,7 +290,7 @@ if ($ADMIN->fulltree) {
             'block_panopto/publisher_role_mapping',
             get_string('block_panopto_publisher_mapping', 'block_panopto'),
             get_string('block_panopto_publisher_mapping_desc', 'block_panopto'),
-            array(),
+            [],
             $courserolearray
         )
     );
@@ -289,7 +300,7 @@ if ($ADMIN->fulltree) {
             'block_panopto/creator_role_mapping',
             get_string('block_panopto_creator_mapping', 'block_panopto'),
             get_string('block_panopto_creator_mapping_desc', 'block_panopto'),
-            array(3, 4),
+            [3, 4],
             $courserolearray
         )
     );

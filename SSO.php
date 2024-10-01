@@ -93,10 +93,10 @@ if ($callbackverified) {
         $targetserver->name = $servername;
         $targetserver->appkey = panopto_get_app_key($servername);
 
-        $ssosynctask->set_custom_data(array(
+        $ssosynctask->set_custom_data([
             'userid' => $USER->id,
             'targetserver' => $targetserver
-        ));
+        ]);
 
         switch ($selectedssotype) {
             case 'sync':

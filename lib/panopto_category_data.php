@@ -52,12 +52,22 @@ class panopto_category_data {
     private $moodlecategoryid;
 
     /**
-     * @var string $servername
+     * @var int $sessiongroupid The id of the session group.
+     */
+    private $sessiongroupid;
+
+    /**
+     * @var string $uname The username of the current user.
+     */
+    private $uname;
+
+    /**
+     * @var string $servername  The server name.
      */
     private $servername;
 
     /**
-     * @var int $applicationkey
+     * @var int $applicationkey The application key.
      */
     private $applicationkey;
 
@@ -178,7 +188,7 @@ class panopto_category_data {
         return $DB->get_field(
             'block_panopto_categorymap',
             'panopto_id',
-            array('category_id' => $moodlecategoryid, 'panopto_id' => $targetserver)
+            ['category_id' => $moodlecategoryid, 'panopto_id' => $targetserver]
         );
     }
 
@@ -189,7 +199,7 @@ class panopto_category_data {
      */
     public static function get_panopto_servername($moodlecategoryid) {
         global $DB;
-        return $DB->get_field('block_panopto_categorymap', 'panopto_server', array('category_id' => $moodlecategoryid));
+        return $DB->get_field('block_panopto_categorymap', 'panopto_server', ['category_id' => $moodlecategoryid]);
     }
 
     /**
@@ -218,11 +228,11 @@ class panopto_category_data {
         } else {
             try {
 
-                $targetcategory = $DB->get_record('course_categories', array('id' => $this->moodlecategoryid));
+                $targetcategory = $DB->get_record('course_categories', ['id' => $this->moodlecategoryid]);
 
                 // Check if multilanguage categories are being used.
                 // If they are being used strip html from category name, and take first. If not just return category/folder name.
-                $multilanguagefilter = new filter_multilang('', array());
+                $multilanguagefilter = new filter_multilang('', []);
                 $cleancategoryname = $multilanguagefilter->filter($targetcategory->name);
 
                 // Some users have categories with no name, so default it to id.
@@ -239,7 +249,7 @@ class panopto_category_data {
                     \panopto_data::print_log_verbose(get_string('ensure_category_branch_start', 'block_panopto', $branchinfo));
                 }
 
-                $categoryheirarchy = array();
+                $categoryheirarchy = [];
 
                 if (isset($leafcoursedata) && !empty($leafcoursedata)) {
                     // We don't need to pass a name into this constructor since we can assume course folders exist.
@@ -256,10 +266,12 @@ class panopto_category_data {
                     $targetcategory->id
                 );
 
-                $currentcategory = $DB->get_record('course_categories', array('id' => $targetcategory->parent));
+                $currentcategory = $DB->get_record('course_categories', ['id' => $targetcategory->parent]);
 
                 while (isset($currentcategory) && !empty($currentcategory)) {
-                    $currentcategoryname = !empty(trim($currentcategory->name)) ? $currentcategory->name : $currentcategory->id;
+                    $currentcategoryname = !empty(trim($currentcategory->name))
+                        ? $multilanguagefilter->filter($currentcategory->name)
+                        : $currentcategory->id;
 
                     $categoryheirarchy[] = new SessionManagementStructExternalHierarchyInfo(
                         false,
@@ -267,7 +279,7 @@ class panopto_category_data {
                         $currentcategory->id
                     );
 
-                    $currentcategory = $DB->get_record('course_categories', array('id' => $currentcategory->parent));
+                    $currentcategory = $DB->get_record('course_categories', ['id' => $currentcategory->parent]);
                 }
 
                 $this->ensure_session_manager();
@@ -305,12 +317,12 @@ class panopto_category_data {
      */
     private function save_category_data_to_table($categorybranchdata, $usehtmloutput, $leafcoursedata) {
         global $DB;
-        $row = (object) array(
+        $row = (object) [
             'category_id' => null,
             'panopto_id' => null,
             'panopto_server' => $this->servername,
             'panopto_app_key' => $this->applicationkey
-        );
+        ];
 
         $ensuredbranch = '';
         $leafcoursesessiongroupid = (isset($leafcoursedata) && !empty($leafcoursedata)) ? $leafcoursedata->sessiongroupid : null;
@@ -391,10 +403,10 @@ class panopto_category_data {
 
         $oldrow = $DB->get_record(
             'block_panopto_categorymap',
-            array(
+            [
                 'category_id' => $row->category_id,
                 'panopto_server' => $row->panopto_server
-            )
+            ]
         );
 
         if ($oldrow) {

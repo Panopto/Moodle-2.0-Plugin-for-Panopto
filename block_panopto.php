@@ -78,8 +78,8 @@ class block_panopto extends block_base {
     public function instance_config_save($data, $nolongerused = false) {
 
         // Add roles mapping.
-        $publisherroles = (isset($data->publisher)) ? $data->publisher : array();
-        $creatorroles = (isset($data->creator)) ? $data->creator : array();
+        $publisherroles = (isset($data->publisher)) ? $data->publisher : [];
+        $creatorroles = (isset($data->creator)) ? $data->creator : [];
 
         // Get the current role mappings set for the current course from the db.
         $mappings = \panopto_data::get_course_role_mappings($this->page->course->id);
@@ -154,11 +154,11 @@ class block_panopto extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $params = array('id' => self::CONTENTID, 'courseid' => $COURSE->id);
+        $params = ['id' => self::CONTENTID, 'courseid' => $COURSE->id];
 
         $this->page->requires->yui_module('moodle-block_panopto-asyncload',
                                     'M.block_panopto.asyncload.init',
-                                    array($params),
+                                    [$params],
                                     null,
                                     true);
 
@@ -212,7 +212,7 @@ class block_panopto extends block_base {
     public function applicable_formats() {
         // Since block is dealing with courses and enrollment's the only possible.
         // place where Panopto block can be used is the course.
-        return array('course-view' => true);
+        return ['course-view' => true];
     }
 
     /**

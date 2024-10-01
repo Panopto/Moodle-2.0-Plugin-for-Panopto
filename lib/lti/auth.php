@@ -165,15 +165,15 @@ $course = null;
 
 if (empty($courseid)) {
     $courseid = 1;
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 } else {
     $context = context_course::instance($courseid);
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
     $PAGE->set_context($context);
     $PAGE->set_course($course);
 }
 
-// Specific logic for Moodle 4.2
+// Specific logic for Moodle 4.2.
 $ismoodle42minimum = empty($CFG->version) ? false : $CFG->version >= 2023042400.00;
 if ($ismoodle42minimum) {
     $panoptodata = new \panopto_data($course->id);
@@ -234,7 +234,7 @@ if ($ok) {
             }
         }
 
-        // If we get to this point we know this is a plug-in based request and will not support grading
+        // If we get to this point we know this is a plug-in based request and will not support grading.
         $lti->custom->grading_not_supported = true;
 
         list($endpoint, $params) = panoptoblock_lti_utility::get_launch_data($lti, $nonce);

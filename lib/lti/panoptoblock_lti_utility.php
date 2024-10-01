@@ -318,10 +318,10 @@ class panoptoblock_lti_utility {
         ));
 
         $launchcontainer = lti_get_launch_container($instance, $typeconfig);
-        $returnurlparams = array('course' => $course->id,
+        $returnurlparams = ['course' => $course->id,
                                  'launch_container' => $launchcontainer,
                                  'instanceid' => $instance->typeid,
-                                 'sesskey' => sesskey());
+                                 'sesskey' => sesskey()];
 
         // Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns.
         $url = new \moodle_url('/mod/lti/return.php', $returnurlparams);
@@ -368,7 +368,7 @@ class panoptoblock_lti_utility {
         $plugins = core_component::get_plugin_list('ltisource');
         foreach (array_keys($plugins) as $plugin) {
             $pluginparams = component_callback('ltisource_'.$plugin, 'before_launch',
-                array($instance, $endpoint, $requestparams), array());
+                [$instance, $endpoint, $requestparams], []);
 
             if (!empty($pluginparams) && is_array($pluginparams)) {
                 $requestparams = array_merge($requestparams, $pluginparams);
@@ -406,7 +406,7 @@ class panoptoblock_lti_utility {
             $params = $requestparams;
         }
 
-        return array($endpoint, $params);
+        return [$endpoint, $params];
     }
 
     /**
@@ -423,9 +423,9 @@ class panoptoblock_lti_utility {
 
         $targetservername = null;
 
-        $blockexists = $DB->get_record('block', array('name' => 'panopto'), 'name');
+        $blockexists = $DB->get_record('block', ['name' => 'panopto'], 'name');
         if (!empty($blockexists)) {
-            $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', array('moodleid' => $courseid));
+            $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $courseid]);
         }
 
         // If the course if not provisioned with the Panopto block then get the default panopto server fqdn.
@@ -743,9 +743,9 @@ class panoptoblock_lti_utility {
 
         $targetservername = null;
 
-        $blockexists = $DB->get_record('block', array('name' => 'panopto'), 'name');
+        $blockexists = $DB->get_record('block', ['name' => 'panopto'], 'name');
         if (!empty($blockexists)) {
-            $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', array('moodleid' => $courseid));
+            $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $courseid]);
         }
 
         // If the course if not provisioned with the Panopto block then get the default panopto server fqdn.

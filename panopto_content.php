@@ -35,9 +35,11 @@ require_once(dirname(__FILE__) . '/lib/panopto_data.php');
 
 try {
     $courseid = required_param('courseid', PARAM_INT);
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
     require_login($course);
     require_sesskey();
+    // Close the session so that the users other tabs in the same session are not blocked.
+    \core\session\manager::write_close();
     header('Content-Type: text/html; charset=utf-8');
     global $CFG, $USER;
 
@@ -59,9 +61,9 @@ try {
         ($allowautoprovision == 'onblockview')) {
 
         $task = new \block_panopto\task\provision_course();
-        $task->set_custom_data(array(
+        $task->set_custom_data([
             'courseid' => $courseid
-        ));
+        ]);
 
         try {
             $task->execute();
@@ -120,7 +122,7 @@ try {
 
                     // Get all Completed.
                     $sessionlist = $panoptodata->get_session_list($courseinfo->DeliveriesHaveSpecifiedOrder);
-                    $livesessions = array();
+                    $livesessions = [];
 
                     if (is_array($sessionlist) && !empty($sessionlist)) {
                         foreach ($sessionlist as $sessionobj) {

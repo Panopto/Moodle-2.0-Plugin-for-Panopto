@@ -244,7 +244,7 @@ function panopto_bulk_sanitize_and_get_mappings($params, $skipimports) {
 
     $upgradestep = get_string('verifying_permission', 'block_panopto');
 
-    $panoptocourseobjects = array();
+    $panoptocourseobjects = [];
 
     $getunamepanopto = new \panopto_data(null);
 
@@ -267,7 +267,7 @@ function panopto_bulk_sanitize_and_get_mappings($params, $skipimports) {
         $oldpanoptocourse = new stdClass;
         $oldpanoptocourse->panopto = new \panopto_data($oldcourse->moodleid);
 
-        $existingmoodlecourse = $DB->get_record('course', array('id' => $oldcourse->moodleid));
+        $existingmoodlecourse = $DB->get_record('course', ['id' => $oldcourse->moodleid]);
 
         $moodlecourseexists = isset($existingmoodlecourse) && $existingmoodlecourse !== false;
         $hasvalidpanoptodata = isset($oldpanoptocourse->panopto->servername) && !empty($oldpanoptocourse->panopto->servername) &&
@@ -294,7 +294,7 @@ function panopto_bulk_sanitize_and_get_mappings($params, $skipimports) {
                 panopto_bulk_display_access_error($getunamepanopto->panopto_decorate_username($getunamepanopto->uname));
 
                 // If the user does not have access on even one of the folders return nothing.
-                return array();
+                return [];
             }
         } else {
             // Shouldn't hit this case, but in the case a row in the DB has invalid data move it to the old_foldermap.
@@ -311,7 +311,7 @@ function panopto_bulk_sanitize_and_get_mappings($params, $skipimports) {
             panopto_bulk_display_access_error($getunamepanopto->panopto_decorate_username($getunamepanopto->uname));
 
             // If the user does not have access on even one of the folders return nothing.
-            return array();
+            return [];
         } else {
             if (isset($oldpanoptocourse->provisioninginfo->couldnotfindmappedfolder) &&
                 $oldpanoptocourse->provisioninginfo->couldnotfindmappedfolder === true) {
@@ -330,7 +330,7 @@ function panopto_bulk_sanitize_and_get_mappings($params, $skipimports) {
                 foreach ($courseimports as $courseimport) {
                     $importpanopto = new \panopto_data($courseimport);
 
-                    $existingmoodlecourse = $DB->get_record('course', array('id' => $courseimport));
+                    $existingmoodlecourse = $DB->get_record('course', ['id' => $courseimport]);
 
                     $moodlecourseexists = isset($existingmoodlecourse) && $existingmoodlecourse !== false;
                     $hasvalidpanoptodata = isset($importpanopto->servername) && !empty($importpanopto->servername) &&

@@ -102,7 +102,7 @@ function panopto_validate_auth_code($payload, $authcode) {
  * @param string $apiurl
  */
 function panopto_generate_wsdl_service_params($apiurl) {
-    $serviceparams = array('wsdl_url' => $apiurl);
+    $serviceparams = ['wsdl_url' => $apiurl];
 
     // Check to see if the user set any proxy options.
     $proxyhost = get_config('block_panopto', 'wsdl_proxy_host');
@@ -134,7 +134,7 @@ function panopto_get_configured_panopto_servers() {
     // Increment numservers by 1 to take into account starting at 0.
     ++$numservers;
 
-    $targetserverarray = array();
+    $targetserverarray = [];
     for ($serverwalker = 1; $serverwalker <= $numservers; ++$serverwalker) {
 
         // Generate strings corresponding to potential servernames in the config.
@@ -188,7 +188,7 @@ function panopto_get_target_panopto_server() {
  *
  */
 function panopto_get_valid_panopto_servers() {
-    $ret = array();
+    $ret = [];
 
     $numservers = get_config('block_panopto', 'server_number');
     $numservers = isset($numservers) ? $numservers : 0;
@@ -350,7 +350,7 @@ function panopto_get_all_roles_at_context_and_contextlevel($targetcontext) {
         "LEFT JOIN {role_names} rn ON (rn.contextid = :targetcontext AND rn.roleid = r.id) " .
         "ORDER BY r.sortorder ASC";
     return $DB->get_records_sql($sql,
-        array('targetcontext' => $targetcontext->id, 'targetcontextlevel' => $targetcontext->contextlevel));
+        ['targetcontext' => $targetcontext->id, 'targetcontextlevel' => $targetcontext->contextlevel]);
 }
 
 /**

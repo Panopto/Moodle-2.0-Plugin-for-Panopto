@@ -91,7 +91,7 @@ function reinitialize_all_imports() {
 
     $courseimports = $DB->get_records('block_panopto_importmap');
 
-    $coursepanoptoarray = array();
+    $coursepanoptoarray = [];
 
     \panopto_data::print_log(get_string('begin_reinitializing_imports', 'block_panopto'));
 
@@ -102,7 +102,7 @@ function reinitialize_all_imports() {
         if (!isset($coursepanoptoarray[$courseimport->target_moodle_id])) {
             $targetpanopto = new \panopto_data($courseimport->target_moodle_id);
 
-            $targetmoodlecourse = $DB->get_record('course', array('id' => $courseimport->target_moodle_id));
+            $targetmoodlecourse = $DB->get_record('course', ['id' => $courseimport->target_moodle_id]);
 
             $targetcourseexists = isset($targetmoodlecourse) && $targetmoodlecourse !== false;
             $hasvalidpanoptodata = isset($targetpanopto->servername) && !empty($targetpanopto->servername) &&

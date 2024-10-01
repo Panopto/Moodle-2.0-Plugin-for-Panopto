@@ -136,11 +136,11 @@ class panopto_data {
      * @return array
      */
     public static function getpossiblefoldernamestyles() {
-        return array(
+        return [
             'fullname' => get_string('name_style_fullname', 'block_panopto'),
             'shortname' => get_string('name_style_shortname', 'block_panopto'),
             'combination' => get_string('name_style_combination', 'block_panopto')
-        );
+        ];
     }
     /**
      * Returns an array of possible values for the Panopto folder name style
@@ -148,11 +148,22 @@ class panopto_data {
      * @return array
      */
     public static function getpossibleprovisiontypes() {
-        return array(
+        return [
             'off' => get_string('autoprovision_off', 'block_panopto'),
             'oncoursecreation' => get_string('autoprovision_new_courses', 'block_panopto'),
             'onblockview' => get_string('autoprovision_on_block_view', 'block_panopto')
-        );
+        ];
+    }
+    /**
+     * Returns an array of possible values for copy provisioning.
+     *
+     * @return array
+     */
+    public static function getpossiblecopyprovisiontypes() {
+        return [
+            'both' => get_string('provision_both_on_copy', 'block_panopto'),
+            'onlytarget' => get_string('provision_only_target_on_copy', 'block_panopto'),
+        ];
     }
     /**
      * Return the possible list of SSO sync types
@@ -160,11 +171,11 @@ class panopto_data {
      * @return array
      */
     public static function getpossiblessosynctypes() {
-        return array(
+        return [
             'nosync' => get_string('sso_type_nosync', 'block_panopto'),
             'sync' => get_string('sso_type_sync', 'block_panopto'),
             'asyncsync' => get_string('sso_type_asyncsync', 'block_panopto')
-        );
+        ];
     }
 
     /**
@@ -175,7 +186,7 @@ class panopto_data {
     public static function remove_all_panopto_adhoc_tasks() {
         global $DB;
 
-        return $DB->delete_records_select('task_adhoc', $DB->sql_like('classname', '?'), array('%block_panopto%task%'));
+        return $DB->delete_records_select('task_adhoc', $DB->sql_like('classname', '?'), ['%block_panopto%task%']);
     }
 
     /**
@@ -193,7 +204,7 @@ class panopto_data {
         // Get servername and application key specific to Moodle course if ID is specified.
         if (isset($moodlecourseid) && !empty($moodlecourseid)) {
             $foldermapdata = $DB->get_record('block_panopto_foldermap',
-                array('moodleid' => $moodlecourseid), 'panopto_server,panopto_id');
+                ['moodleid' => $moodlecourseid], 'panopto_server,panopto_id');
             if (!empty($foldermapdata)) {
                 $this->servername = $foldermapdata->panopto_server;
                 $this->sessiongroupid = $foldermapdata->panopto_id;
@@ -381,7 +392,7 @@ class panopto_data {
 
                 $currentblockversion = $DB->get_record(
                     'config_plugins',
-                    array('plugin' => 'block_panopto', 'name' => 'version'),
+                    ['plugin' => 'block_panopto', 'name' => 'version'],
                     'value'
                 );
 
@@ -395,9 +406,9 @@ class panopto_data {
                 $coursecontext = context_course::instance($this->moodlecourseid);
                 $enrolledusers = get_enrolled_users($coursecontext);
 
-                $courseinfo->viewers = array();
-                $courseinfo->creators = array();
-                $courseinfo->publishers = array();
+                $courseinfo->viewers = [];
+                $courseinfo->creators = [];
+                $courseinfo->publishers = [];
 
                 // Sync every user enrolled in the course.
                 foreach ($enrolledusers as $enrolleduser) {
@@ -433,7 +444,7 @@ class panopto_data {
                     $targetcategory = $DB->get_field(
                         'course',
                         'category',
-                        array('id' => $this->moodlecourseid)
+                        ['id' => $this->moodlecourseid]
                     );
 
                     if (isset($targetcategory) && !empty($targetcategory)) {
@@ -554,7 +565,7 @@ class panopto_data {
 
             $coursenameinfo = $DB->get_record(
                 'course',
-                array('id' => $this->moodlecourseid),
+                ['id' => $this->moodlecourseid],
                 'fullname,shortname'
             );
 
@@ -612,7 +623,7 @@ class panopto_data {
 
             $coursenameinfo = $DB->get_record(
                 'course',
-                array('id' => $this->moodlecourseid),
+                ['id' => $this->moodlecourseid],
                 'fullname,shortname'
             );
 
@@ -656,11 +667,11 @@ class panopto_data {
     public function copy_panopto_content($originalcourseid) {
         global $USER;
 
-        $importresults = array();
+        $importresults = [];
 
         $coursecopytask = new stdClass;
         $coursecopytask->IdProviderName = $this->instancename;
-        $coursecopytask->SourceCourseContexts = array($originalcourseid);
+        $coursecopytask->SourceCourseContexts = [$originalcourseid];
         $coursecopytask->TargetCourseContext = $this->moodlecourseid;
 
         // The api call takes an array but moodle logging can't handle this well so an extra variable is needed for logging.
@@ -710,8 +721,8 @@ class panopto_data {
                 'CURLOPT_VERBOSE' => false,
                 'CURLOPT_RETURNTRANSFER' => true,
                 'CURLOPT_HEADER' => false,
-                'CURLOPT_HTTPHEADER' => array('Content-Type: application/json',
-                                              'Cookie: .ASPXAUTH='.$aspxauthcookie)
+                'CURLOPT_HTTPHEADER' => ['Content-Type: application/json',
+                                              'Cookie: .ASPXAUTH='.$aspxauthcookie]
             ];
 
             $sockettimeout = get_config('block_panopto', 'panopto_socket_timeout');
@@ -766,8 +777,8 @@ class panopto_data {
      * @return array
      */
     public function init_and_sync_import_ccv1($newimportid) {
-        $importresults = array();
-        $handledimports = array();
+        $importresults = [];
+        $handledimports = [];
 
         self::print_log_verbose(get_string('init_import_target', 'block_panopto', $this->moodlecourseid));
         self::print_log_verbose(get_string('init_import_source', 'block_panopto', $newimportid));
@@ -788,11 +799,11 @@ class panopto_data {
         if (!isset($importpanopto->sessiongroupid)) {
             self::print_log(get_string('import_not_mapped', 'block_panopto'));
         } else if (!isset($provisioninginfo->accesserror)) {
-            $sessiongroupids = array();
+            $sessiongroupids = [];
             $sessiongroupids[] = $importpanopto->sessiongroupid;
             // We need to make sure this course gets access to anything the course it imported had access to.
             $nestedimports = self::get_import_list($newimportid);
-            $nestedimportresults = array();
+            $nestedimportresults = [];
             foreach ($nestedimports as $nestedimportid) {
                 $nestedimportpanopto = new \panopto_data($nestedimportid);
                 // If we are importing a nested child make sure we have not already imported.
@@ -940,16 +951,17 @@ class panopto_data {
         self::print_log_verbose(get_string('attempt_sync_user', 'block_panopto', $userid));
         self::print_log_verbose(get_string('attempt_sync_user_server', 'block_panopto', $this->servername));
 
-        $userinfo = $DB->get_record('user', array('id' => $userid));
+        $userinfo = $DB->get_record('user', ['id' => $userid]);
+        $istempuser = $this->is_temp_user(isset($userinfo) ? $userinfo->username : "", isset($userinfo) ? $userinfo->email : "");
 
-        // Only sync if we find an existing user with the given id.
-        if (isset($userinfo) && ($userinfo !== false)) {
+        // Only sync if we find an existing user with the given id, and if not temp user.
+        if (isset($userinfo) && ($userinfo !== false) && !$istempuser) {
             $instancename = get_config('block_panopto', 'instance_name');
 
             $currentcourses = enrol_get_users_courses($userid, true);
 
             // Go through each course.
-            $groupstosync = array();
+            $groupstosync = [];
             foreach ($currentcourses as $course) {
                 $coursecontext = context_course::instance($course->id);
 
@@ -1011,7 +1023,7 @@ class panopto_data {
      */
     public static function add_new_course_import($courseid, $newimportid) {
         global $DB;
-        $rowarray = array('target_moodle_id' => $courseid, 'import_moodle_id' => $newimportid);
+        $rowarray = ['target_moodle_id' => $courseid, 'import_moodle_id' => $newimportid];
 
         $currentrow = $DB->get_record('block_panopto_importmap', $rowarray);
         if (!$currentrow) {
@@ -1032,12 +1044,12 @@ class panopto_data {
 
         $courseimports = $DB->get_records(
             'block_panopto_importmap',
-            array('target_moodle_id' => $courseid),
+            ['target_moodle_id' => $courseid],
             null,
             'id,import_moodle_id'
         );
 
-        $retarray = array();
+        $retarray = [];
         if (isset($courseimports) && !empty($courseimports)) {
             foreach ($courseimports as $courseimport) {
                 $retarray[] = $courseimport->import_moodle_id;
@@ -1057,12 +1069,12 @@ class panopto_data {
 
         $courseimports = $DB->get_records(
             'block_panopto_importmap',
-            array('import_moodle_id' => $courseid),
+            ['import_moodle_id' => $courseid],
             null,
             'id,target_moodle_id'
         );
 
-        $retarray = array();
+        $retarray = [];
         if (isset($courseimports) && !empty($courseimports)) {
             foreach ($courseimports as $courseimport) {
                 $retarray[] = $courseimport->target_moodle_id;
@@ -1078,7 +1090,7 @@ class panopto_data {
      * @param string $sessionshavespecificorder session ordering
      */
     public function get_session_list($sessionshavespecificorder) {
-        $sessionlist = array();
+        $sessionlist = [];
         if ($this->servername && $this->applicationkey && $this->sessiongroupid) {
             $this->ensure_session_manager();
         }
@@ -1189,6 +1201,22 @@ class panopto_data {
     }
 
     /**
+     * Lets us know if we have a value inside the config for a Panopto block,
+     * we don't want any of our events to fire on a disabled block.
+     *
+     */
+    public static function is_block_disabled() {
+        global $DB;
+
+        $sql = "SELECT * " .
+                "FROM {block} b " .
+                "WHERE b.name = :name AND b.visible = 0";
+        $isblockdisabled = $DB->get_record_sql($sql, ['name' => 'panopto']);
+
+        return $isblockdisabled ? true : false;
+    }
+
+    /**
      * Lets us know is we are using at least the minumum required version for the Panopto block
      *
      */
@@ -1217,7 +1245,7 @@ class panopto_data {
         global $DB;
         return $DB->get_records(
             'block_panopto_foldermap',
-            array('panopto_id' => $sessiongroupid),
+            ['panopto_id' => $sessiongroupid],
             null,
             'id,moodleid'
         );
@@ -1230,7 +1258,7 @@ class panopto_data {
      */
     public static function get_panopto_course_id($moodlecourseid) {
         global $DB;
-        return $DB->get_field('block_panopto_foldermap', 'panopto_id', array('moodleid' => $moodlecourseid));
+        return $DB->get_field('block_panopto_foldermap', 'panopto_id', ['moodleid' => $moodlecourseid]);
     }
 
     /**
@@ -1240,7 +1268,7 @@ class panopto_data {
      */
     public static function get_panopto_servername($moodlecourseid) {
         global $DB;
-        return $DB->get_field('block_panopto_foldermap', 'panopto_server', array('moodleid' => $moodlecourseid));
+        return $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $moodlecourseid]);
     }
 
     /**
@@ -1281,13 +1309,13 @@ class panopto_data {
     public static function get_course_role_mappings($moodlecourseid) {
         global $DB;
 
-        $pubroles = array();
-        $creatorroles = array();
+        $pubroles = [];
+        $creatorroles = [];
 
          // Get creator roles as an array.
         $creatorrolesraw = $DB->get_records(
             'block_panopto_creatormap',
-            array('moodle_id' => $moodlecourseid),
+            ['moodle_id' => $moodlecourseid],
             'id,role_id'
         );
 
@@ -1300,7 +1328,7 @@ class panopto_data {
          // Get publisher roles as an array.
         $pubrolesraw = $DB->get_records(
             'block_panopto_publishermap',
-            array('moodle_id' => $moodlecourseid),
+            ['moodle_id' => $moodlecourseid],
             'id,role_id'
         );
 
@@ -1310,7 +1338,7 @@ class panopto_data {
             }
         }
 
-        return array('publisher' => $pubroles, 'creator' => $creatorroles);
+        return ['publisher' => $pubroles, 'creator' => $creatorroles];
     }
 
     /**
@@ -1325,14 +1353,14 @@ class panopto_data {
      */
     public static function set_course_foldermap($moodlecourseid, $sessiongroupid, $servername, $appkey, $externalcourseid) {
         global $DB;
-        $row = (object) array(
+        $row = (object) [
             'moodleid' => $moodlecourseid,
             'panopto_id' => $sessiongroupid,
             'panopto_server' => $servername,
             'panopto_app_key' => $appkey
-        );
+        ];
 
-        $oldrecord = $DB->get_record('block_panopto_foldermap', array('moodleid' => $moodlecourseid));
+        $oldrecord = $DB->get_record('block_panopto_foldermap', ['moodleid' => $moodlecourseid]);
 
         if ($oldrecord) {
             $row->id = $oldrecord->id;
@@ -1351,15 +1379,15 @@ class panopto_data {
      */
     public static function set_panopto_course_id($moodlecourseid, $sessiongroupid) {
         global $DB;
-        if ($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_foldermap', ['moodleid' => $moodlecourseid])) {
             return $DB->set_field(
                 'block_panopto_foldermap',
                 'panopto_id',
                 $sessiongroupid,
-                array('moodleid' => $moodlecourseid)
+                ['moodleid' => $moodlecourseid]
             );
         } else {
-            $row = (object) array('moodleid' => $moodlecourseid, 'panopto_id' => $sessiongroupid);
+            $row = (object) ['moodleid' => $moodlecourseid, 'panopto_id' => $sessiongroupid];
             return $DB->insert_record('block_panopto_foldermap', $row);
         }
     }
@@ -1372,15 +1400,15 @@ class panopto_data {
      */
     public static function set_panopto_server_name($moodlecourseid, $panoptoservername) {
         global $DB;
-        if ($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_foldermap', ['moodleid' => $moodlecourseid])) {
             return $DB->set_field(
                 'block_panopto_foldermap',
                 'panopto_server',
                 $panoptoservername,
-                array('moodleid' => $moodlecourseid)
+                ['moodleid' => $moodlecourseid]
             );
         } else {
-            $row = (object) array('moodleid' => $moodlecourseid, 'panopto_server' => $panoptoservername);
+            $row = (object) ['moodleid' => $moodlecourseid, 'panopto_server' => $panoptoservername];
             return $DB->insert_record('block_panopto_foldermap', $row);
         }
     }
@@ -1393,15 +1421,15 @@ class panopto_data {
      */
     public static function set_panopto_app_key($moodlecourseid, $panoptoappkey) {
         global $DB;
-        if ($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_foldermap', ['moodleid' => $moodlecourseid])) {
             return $DB->set_field(
                 'block_panopto_foldermap',
                 'panopto_app_key',
                 $panoptoappkey,
-                array('moodleid' => $moodlecourseid)
+                ['moodleid' => $moodlecourseid]
             );
         } else {
-            $row = (object) array('moodleid' => $moodlecourseid, 'panopto_app_key' => $panoptoappkey);
+            $row = (object) ['moodleid' => $moodlecourseid, 'panopto_app_key' => $panoptoappkey];
             return $DB->insert_record('block_panopto_foldermap', $row);
         }
     }
@@ -1417,21 +1445,21 @@ class panopto_data {
         global $DB;
 
         // Delete all old records to prevent non-existant mapping staying when they shouldn't.
-        $DB->delete_records('block_panopto_publishermap', array('moodle_id' => $moodlecourseid));
+        $DB->delete_records('block_panopto_publishermap', ['moodle_id' => $moodlecourseid]);
 
         foreach ($publisherroles as $pubrole) {
             if (!empty($pubrole)) {
-                $row = (object) array('moodle_id' => $moodlecourseid, 'role_id' => $pubrole);
+                $row = (object) ['moodle_id' => $moodlecourseid, 'role_id' => $pubrole];
                 $DB->insert_record('block_panopto_publishermap', $row);
             }
         }
 
         // Delete all old records to prevent non-existant mapping staying when they shouldn't.
-        $DB->delete_records('block_panopto_creatormap', array('moodle_id' => $moodlecourseid));
+        $DB->delete_records('block_panopto_creatormap', ['moodle_id' => $moodlecourseid]);
 
         foreach ($creatorroles as $creatorrole) {
             if (!empty($creatorrole)) {
-                $row = (object) array('moodle_id' => $moodlecourseid, 'role_id' => $creatorrole);
+                $row = (object) ['moodle_id' => $moodlecourseid, 'role_id' => $creatorrole];
                 $DB->insert_record('block_panopto_creatormap', $row);
             }
         }
@@ -1446,8 +1474,8 @@ class panopto_data {
      */
     public static function delete_panopto_relation($moodlecourseid, $movetoinactivetable) {
         global $DB;
-        $deletedrecords = array();
-        $existingrecords = $DB->get_records('block_panopto_foldermap', array('moodleid' => $moodlecourseid));
+        $deletedrecords = [];
+        $existingrecords = $DB->get_records('block_panopto_foldermap', ['moodleid' => $moodlecourseid]);
         if ($existingrecords) {
             if ($movetoinactivetable) {
                 $DB->insert_records('block_panopto_old_foldermap', $existingrecords);
@@ -1455,37 +1483,37 @@ class panopto_data {
 
             $deletedrecords['foldermap'] = $DB->delete_records(
                 'block_panopto_foldermap',
-                array('moodleid' => $moodlecourseid)
+                ['moodleid' => $moodlecourseid]
             );
         }
 
         // Clean up any creator role mappings.
-        if ($DB->get_records('block_panopto_creatormap', array('moodle_id' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_creatormap', ['moodle_id' => $moodlecourseid])) {
             $DB->delete_records(
                 'block_panopto_creatormap',
-                array('moodle_id' => $moodlecourseid)
+                ['moodle_id' => $moodlecourseid]
             );
         }
 
         // Clean up any publisher role mappings.
-        if ($DB->get_records('block_panopto_publishermap', array('moodle_id' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_publishermap', ['moodle_id' => $moodlecourseid])) {
             $DB->delete_records(
                 'block_panopto_publishermap',
-                array('moodle_id' => $moodlecourseid)
+                ['moodle_id' => $moodlecourseid]
             );
         }
 
-        if ($DB->get_records('block_panopto_importmap', array('target_moodle_id' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_importmap', ['target_moodle_id' => $moodlecourseid])) {
             $deletedrecords['imports'] = $DB->delete_records(
                 'block_panopto_importmap',
-                array('target_moodle_id' => $moodlecourseid)
+                ['target_moodle_id' => $moodlecourseid]
             );
         }
 
-        if ($DB->get_records('block_panopto_importmap', array('import_moodle_id' => $moodlecourseid))) {
+        if ($DB->get_records('block_panopto_importmap', ['import_moodle_id' => $moodlecourseid])) {
             $deletedrecords['exports'] = $DB->delete_records(
                 'block_panopto_importmap',
-                array('import_moodle_id' => $moodlecourseid)
+                ['import_moodle_id' => $moodlecourseid]
             );
         }
 
@@ -1513,7 +1541,7 @@ class panopto_data {
         global $DB;
 
         $panoptofolders = $this->get_creator_folders_list();
-        $options = array();
+        $options = [];
         $containsmappedfolder = false;
 
         if (!empty($panoptofolders)) {
@@ -1538,7 +1566,7 @@ class panopto_data {
                     ? $folderinfo->IsAssignmentFolder
                     : false;
 
-                if ((!$DB->get_records('block_panopto_foldermap', array('panopto_id' => $folderinfo->Id))
+                if ((!$DB->get_records('block_panopto_foldermap', ['panopto_id' => $folderinfo->Id])
                     || ($this->sessiongroupid === $folderinfo->Id))
                     && !$isassignmentfolder) {
 
@@ -1558,13 +1586,13 @@ class panopto_data {
 
         if (empty($options)) {
             if (isset($panoptofolders) && empty($this->sessiongroupid)) {
-                $options = array('Error' => '-- No Courses Available --');
+                $options = ['Error' => '-- No Courses Available --'];
             } else if (!isset($panoptofolders) && empty($this->sessiongroupid)) {
-                $options = array('Error' => '-- Unable to retrieve course list --');
+                $options = ['Error' => '-- Unable to retrieve course list --'];
             }
         }
 
-        return array('courses' => $options, 'selected' => $this->sessiongroupid);
+        return ['courses' => $options, 'selected' => $this->sessiongroupid];
     }
 
     /**
@@ -1575,7 +1603,7 @@ class panopto_data {
      * @return array
      */
     public static function build_capability_to_roles($roles, $capability) {
-        $assigncaps = array();
+        $assigncaps = [];
         foreach ($roles as $role) {
             if (isset($role) && trim($role) !== '') {
                 $assigncaps[$role] = $capability;
@@ -1598,13 +1626,13 @@ class panopto_data {
 
         $processed = false;
         $assigned = self::build_capability_to_roles($roles, $capability);
-        $existing = array();
+        $existing = [];
 
         // Extract the existing capabilities that have been assigned for context, role and capability.
         foreach ($roles as $roleid) {
             // Only query the DB if $roleid is not null.
             if ($roleid && $DB->record_exists('role_capabilities',
-                array('contextid' => $context->id, 'roleid' => $roleid, 'capability' => $capability))) {
+                ['contextid' => $context->id, 'roleid' => $roleid, 'capability' => $capability])) {
                 $existing[$roleid] = $capability;
             }
         }
@@ -1764,8 +1792,8 @@ class panopto_data {
             'CURLOPT_VERBOSE' => false,
             'CURLOPT_RETURNTRANSFER' => true,
             'CURLOPT_HEADER' => false,
-            'CURLOPT_HTTPHEADER' => array('Content-Type: application/json',
-                                          'Cookie: .ASPXAUTH='.$aspxauthcookie)
+            'CURLOPT_HTTPHEADER' => ['Content-Type: application/json',
+                                          'Cookie: .ASPXAUTH='.$aspxauthcookie],
         ];
 
         $sockettimeout = get_config('block_panopto', 'panopto_socket_timeout');
@@ -1814,7 +1842,23 @@ class panopto_data {
                 "JOIN {lti} m ON (m.id = cm.instance) " .
                 "WHERE md.name = :name AND cm.course = :course";
         return $DB->get_records_sql($sql,
-            array('name' => 'lti', 'course' => $courseid));
+            ['name' => 'lti', 'course' => $courseid]);
+    }
+
+    /**
+     * Check if username format is from a temp user.
+     *
+     * @param string $username User name
+     * @param string $email User email
+     */
+    public function is_temp_user($username, $email) {
+        // Match the following pattern for username "adfake@panopto.com.1690123065".
+        // Temp users are expected to have a GUID instead of a valid email address.
+        $usernamepattern = '/^([a-zA-Z0-9._%+-]+)@[a-zA-Z0-9.-]+\.\d+$/';
+        $isinvalidemail = filter_var($email, FILTER_VALIDATE_EMAIL) === false;
+        $matchesusernamepattern = preg_match($usernamepattern, $username) === 1;
+
+        return $isinvalidemail && $matchesusernamepattern;
     }
 
     /**

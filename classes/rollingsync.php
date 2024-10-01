@@ -67,7 +67,7 @@ class block_panopto_rollingsync {
             if (!empty($tool)) {
                 // Default intro should be a folderview.
                 $draftideditor = file_get_submitted_draft_itemid('introeditor');
-                file_prepare_draft_area($draftideditor, null, null, null, null, array('subdirs' => true));
+                file_prepare_draft_area($draftideditor, null, null, null, null, ['subdirs' => true]);
 
                 $moduleinfo = new stdClass();
                 $moduleinfo->modulename = 'lti';
@@ -82,13 +82,13 @@ class block_panopto_rollingsync {
                 $moduleinfo->visible = true;
                 $moduleinfo->intro = '';
                 $moduleinfo->icon = 'https://static-contents.panopto.com/prod/panopto_logo_moodle_tool_60x60.png';
-                $moduleinfo->introeditor = array('text' => $moduleinfo->intro, 'format' => FORMAT_HTML, 'itemid' => $draftideditor);
+                $moduleinfo->introeditor = ['text' => $moduleinfo->intro, 'format' => FORMAT_HTML, 'itemid' => $draftideditor];
                 create_module($moduleinfo);
             }
         }
 
         if (get_config('block_panopto', 'auto_add_block_to_new_courses')) {
-            $course = $DB->get_record('course', array('id' => $event->courseid));
+            $course = $DB->get_record('course', ['id' => $event->courseid]);
 
             if ($event->courseid == SITEID) {
                 $pagetypepattern = 'site-index';
@@ -98,7 +98,7 @@ class block_panopto_rollingsync {
 
             $page = new moodle_page();
             $page->set_course($course);
-            $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('panopto')), $pagetypepattern);
+            $page->blocks->add_blocks([BLOCK_POS_LEFT => ['panopto']], $pagetypepattern);
         }
 
         if (!\panopto_data::is_main_block_configured() ||
@@ -110,12 +110,12 @@ class block_panopto_rollingsync {
 
         if ($allowautoprovision == 'oncoursecreation') {
             $task = new \block_panopto\task\provision_course();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'courseid' => $event->courseid,
                 'relateduserid' => $event->relateduserid,
                 'contextid' => $event->contextid,
                 'eventtype' => 'role'
-            ));
+            ]);
             $task->execute();
         }
     }
@@ -140,8 +140,9 @@ class block_panopto_rollingsync {
      * @param \core\event\course_restored $event
      */
     public static function courserestored(\core\event\course_restored $event) {
-        if (!\panopto_data::is_main_block_configured() ||
-            !\panopto_data::has_minimum_version()) {
+        if (   !\panopto_data::is_main_block_configured()
+            || !\panopto_data::has_minimum_version()
+            || \panopto_data::is_block_disabled()) {
             return;
         }
 
@@ -155,23 +156,64 @@ class block_panopto_rollingsync {
                 return;
             }
 
+            // Which course or courses to provision.
+            $provisionduringcopy = get_config('block_panopto', 'provisioning_during_copy');
+
             $panoptodata = new \panopto_data($newcourseid);
             $originalpanoptodata = new \panopto_data($originalcourseid);
 
+            // This is target or course where we are doing copy or import.
             $istargetcourseprovisioned =
                 isset($panoptodata->servername) && !empty($panoptodata->servername) &&
                 isset($panoptodata->applicationkey) && !empty($panoptodata->applicationkey) &&
                 isset($panoptodata->sessiongroupid) && !empty($panoptodata->sessiongroupid);
 
+            // This is course which we are copying or importing.
             $isoriginalcourseprovisioned =
                 isset($originalpanoptodata->servername) && !empty($originalpanoptodata->servername) &&
                 isset($originalpanoptodata->applicationkey) && !empty($originalpanoptodata->applicationkey) &&
                 isset($originalpanoptodata->sessiongroupid) && !empty($originalpanoptodata->sessiongroupid);
 
-            // If any is provisioned, check if we need to provision the other course.
-            if ($istargetcourseprovisioned || $isoriginalcourseprovisioned) {
-                // Source course not provisioned, lets provision with target servername and applicationkey.
-                if (!$isoriginalcourseprovisioned) {
+            if ($provisionduringcopy == 'both') {
+                // If any is provisioned, check if we need to provision the other course.
+                if ($istargetcourseprovisioned || $isoriginalcourseprovisioned) {
+                    if (!$isoriginalcourseprovisioned) {
+                        // Provision original course.
+                        $panoptodata = new \panopto_data($newcourseid);
+                        $originalpanoptodata->servername = $panoptodata->servername;
+                        $originalpanoptodata->applicationkey = $panoptodata->applicationkey;
+                        $originalprovisioninginfo = $originalpanoptodata->get_provisioning_info();
+                        $originalprovisioneddata = $originalpanoptodata->provision_course($originalprovisioninginfo, false);
+                        if (isset($originalprovisioneddata->Id) && !empty($originalprovisioneddata->Id)) {
+                            $isoriginalcourseprovisioned = true;
+                        }
+                    }
+
+                    if (!$istargetcourseprovisioned) {
+                        // Provision target course.
+                        $originalpanoptodata = new \panopto_data($originalcourseid);
+                        $panoptodata->servername = $originalpanoptodata->servername;
+                        $panoptodata->applicationkey = $originalpanoptodata->applicationkey;
+                        $provisioninginfo = $panoptodata->get_provisioning_info();
+                        $targetprovisioneddata = $panoptodata->provision_course($provisioninginfo, false);
+                        if (isset($targetprovisioneddata->Id) && !empty($targetprovisioneddata->Id)) {
+                            $istargetcourseprovisioned = true;
+                        }
+                    }
+                } else {
+                    // Neither course is provisioned.
+
+                    // Provision target course using automatic operation server.
+                    $targetserver = panopto_get_target_panopto_server();
+                    $panoptodata->servername = $targetserver->name;
+                    $panoptodata->applicationkey = $targetserver->appkey;
+                    $provisioninginfo = $panoptodata->get_provisioning_info();
+                    $targetprovisioneddata = $panoptodata->provision_course($provisioninginfo, false);
+                    if (isset($targetprovisioneddata->Id) && !empty($targetprovisioneddata->Id)) {
+                        $istargetcourseprovisioned = true;
+                    }
+
+                    // Provision original course using target course servername and applicationkey.
                     $panoptodata = new \panopto_data($newcourseid);
                     $originalpanoptodata->servername = $panoptodata->servername;
                     $originalpanoptodata->applicationkey = $panoptodata->applicationkey;
@@ -181,44 +223,23 @@ class block_panopto_rollingsync {
                         $isoriginalcourseprovisioned = true;
                     }
                 }
-
-                // Target course not provisioned, lets provision with original servername and applicationkey.
-                if (!$istargetcourseprovisioned) {
-                    $originalpanoptodata = new \panopto_data($originalcourseid);
-                    $panoptodata->servername = $originalpanoptodata->servername;
-                    $panoptodata->applicationkey = $originalpanoptodata->applicationkey;
+            } else if ($provisionduringcopy == 'onlytarget') {
+                // Provision new course only if source is already provisioned.
+                if ($isoriginalcourseprovisioned && !$istargetcourseprovisioned) {
+                    // Provision target course.
+                    $targetserver = new \panopto_data($originalcourseid);
+                    $panoptodata->servername = $targetserver->servername;
+                    $panoptodata->applicationkey = $targetserver->applicationkey;
                     $provisioninginfo = $panoptodata->get_provisioning_info();
                     $targetprovisioneddata = $panoptodata->provision_course($provisioninginfo, false);
                     if (isset($targetprovisioneddata->Id) && !empty($targetprovisioneddata->Id)) {
                         $istargetcourseprovisioned = true;
                     }
                 }
-            } else {
-                // Neither course is provisioned.
-
-                // Provision target course using automatic operation server.
-                $targetserver = panopto_get_target_panopto_server();
-                $panoptodata->servername = $targetserver->name;
-                $panoptodata->applicationkey = $targetserver->appkey;
-                $provisioninginfo = $panoptodata->get_provisioning_info();
-                $targetprovisioneddata = $panoptodata->provision_course($provisioninginfo, false);
-                if (isset($targetprovisioneddata->Id) && !empty($targetprovisioneddata->Id)) {
-                    $istargetcourseprovisioned = true;
-                }
-
-                // Provision original course using target course servername and applicationkey.
-                $panoptodata = new \panopto_data($newcourseid);
-                $originalpanoptodata->servername = $panoptodata->servername;
-                $originalpanoptodata->applicationkey = $panoptodata->applicationkey;
-                $originalprovisioninginfo = $originalpanoptodata->get_provisioning_info();
-                $originalprovisioneddata = $originalpanoptodata->provision_course($originalprovisioninginfo, false);
-                if (isset($originalprovisioneddata->Id) && !empty($originalprovisioneddata->Id)) {
-                    $isoriginalcourseprovisioned = true;
-                }
             }
 
-            // We should only perform the import if both the target and the source courses are provisioned in panopto.
-            if ($istargetcourseprovisioned && $isoriginalcourseprovisioned) {
+            // We should only perform the import if source course is provisioned in panopto.
+            if ($isoriginalcourseprovisioned) {
 
                 // If courses are provisioned to different servers, log an error and return.
                 if (strcmp($panoptodata->servername, $originalpanoptodata->servername) !== 0) {
@@ -255,10 +276,10 @@ class block_panopto_rollingsync {
         }
 
         $task = new \block_panopto\task\sync_user();
-        $task->set_custom_data(array(
+        $task->set_custom_data([
             'courseid' => $event->courseid,
             'userid' => $event->relateduserid
-        ));
+        ]);
 
         if (get_config('block_panopto', 'async_tasks')) {
             \core\task\manager::queue_adhoc_task($task);
@@ -279,10 +300,10 @@ class block_panopto_rollingsync {
         }
 
         $task = new \block_panopto\task\sync_user();
-        $task->set_custom_data(array(
+        $task->set_custom_data([
             'courseid' => $event->courseid,
             'userid' => $event->relateduserid
-        ));
+        ]);
 
         if (get_config('block_panopto', 'async_tasks')) {
             \core\task\manager::queue_adhoc_task($task);
@@ -304,10 +325,10 @@ class block_panopto_rollingsync {
 
         if (get_config('block_panopto', 'sync_on_enrolment')) {
             $task = new \block_panopto\task\sync_user();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'courseid' => $event->courseid,
                 'userid' => $event->relateduserid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);
@@ -330,10 +351,10 @@ class block_panopto_rollingsync {
 
         if (get_config('block_panopto', 'sync_on_enrolment')) {
             $task = new \block_panopto\task\sync_user();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'courseid' => $event->courseid,
                 'userid' => $event->relateduserid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);
@@ -357,9 +378,9 @@ class block_panopto_rollingsync {
         if (get_config('block_panopto', 'sync_after_login')) {
 
             $task = new \block_panopto\task\sync_user_login();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'userid' => $event->userid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);
@@ -384,9 +405,9 @@ class block_panopto_rollingsync {
         if (get_config('block_panopto', 'sync_after_login')) {
 
             $task = new \block_panopto\task\sync_user_login();
-            $task->set_custom_data(array(
+            $task->set_custom_data([
                 'userid' => $event->relateduserid
-            ));
+            ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
                 \core\task\manager::queue_adhoc_task($task);

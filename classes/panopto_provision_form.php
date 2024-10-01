@@ -48,7 +48,7 @@ class panopto_provision_form extends moodleform {
         $mform = & $this->_form;
         $selectquery = 'id <> 1';
         $coursesraw = $DB->get_records_select('course', $selectquery, null, 'id, shortname, fullname');
-        $courses = array();
+        $courses = [];
         if ($coursesraw) {
             foreach ($coursesraw as $course) {
                 $courses[$course->id] = $course->shortname . ': ' . $course->fullname;
