@@ -1877,7 +1877,7 @@ class panopto_data {
             if (get_config('block_panopto', 'print_log_to_file')) {
                 $currenttime = time();
                 file_put_contents(
-                    $CFG->dirroot . '/PanoptoLogs.txt', date("Y-m-d-h:i:sA", $currenttime) . ": " . $logmessage . "\n",
+                    $CFG->dataroot . '/PanoptoLogs.txt', date("Y-m-d-h:i:sA", $currenttime) . ": " . $logmessage . "\n",
                     FILE_APPEND
                 );
             } else {
