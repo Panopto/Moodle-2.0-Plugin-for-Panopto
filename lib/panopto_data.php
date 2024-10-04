@@ -215,7 +215,7 @@ class panopto_data {
         }
 
         if (isset($USER->username)) {
-            $username = $USER->username;
+            $username = panopto_convert_user_to_send($USER);
         } else {
             $username = 'guest';
         }
@@ -998,15 +998,24 @@ class panopto_data {
             // Only try to sync the users if he Panopto server is up.
             if (self::is_server_alive('https://' . $this->servername . '/Panopto')) {
 
-                $this->ensure_user_manager($userinfo->username);
+                try {
+                    $this->ensure_user_manager($userinfo->username);
+                    $this->usermanager->sync_external_user(
+                        $userinfo->firstname,
+                        $userinfo->lastname,
+                        $userinfo->email,
+                        $groupstosync,
+                        panopto_convert_user_to_send($userinfo)
+                    );
+                } catch (Exception $e) {
+                    $errormessage = 'User ID: ' . $userinfo->id;
+                    if (count($groupstosync) > 0) {
+                        $errormessage .= ' | Groups to sync: ' . implode(",", $groupstosync);
+                    }
 
-                $this->usermanager->sync_external_user(
-                    $userinfo->firstname,
-                    $userinfo->lastname,
-                    $userinfo->email,
-                    $groupstosync,
-                    $userinfo->username
-                );
+                    $errormessage .= '| Error:' . $e->getMessage();
+                    self::print_log(get_string('panopto_sync_external_user_error', 'block_panopto', $errormessage));
+                }
             } else {
                 self::print_log(get_string('panopto_server_error', 'block_panopto', $this->servername));
             }
@@ -1109,7 +1118,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $panoptouser = $this->usermanager->get_user_by_key($userkey);
@@ -1126,7 +1135,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $result = $this->usermanager->delete_users($userids);
@@ -1147,7 +1156,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $result = $this->usermanager->update_contact_info(
