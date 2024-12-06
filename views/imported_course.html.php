@@ -18,7 +18,7 @@
  * The imported course result template
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -30,25 +30,130 @@ defined('MOODLE_INTERNAL') || die();
             <?php
             if (isset($targetpanoptodata) && !empty($targetpanoptodata)) {
             ?>
-                <div class='attribute'><?php echo get_string('attempted_target_course_id', 'block_panopto') ?></div>
-                <div class='value'><?php echo $courseimport->target_moodle_id ?></div>
-                <div class='attribute'><?php echo get_string('attempted_import_course_id', 'block_panopto') ?></div>
-                <div class='value'><?php echo $courseimport->import_moodle_id ?></div>
-                <div class='attribute'><?php echo get_string('attempted_panopto_server', 'block_panopto') ?></div>
-                <div class='value'><?php echo $targetpanopto->servername ?></div>
-                <div class='attribute'><?php echo get_string('import_status', 'block_panopto') ?></div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the attempted target course ID.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('attempted_target_course_id', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the target Moodle course ID for the import.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var int $courseimport->target_moodle_id Target Moodle course ID
+                     */
+                    echo $courseimport->target_moodle_id;
+                    ?>
+                </div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the attempted import course ID.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('attempted_import_course_id', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the Moodle course ID being imported.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var int $courseimport->import_moodle_id Import Moodle course ID
+                     */
+                    echo $courseimport->import_moodle_id;
+                    ?>
+                </div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the target Panopto server.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('attempted_panopto_server', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the server name of the target Panopto server.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var string $targetpanopto->servername Panopto server name
+                     */
+                    echo $targetpanopto->servername;
+                    ?>
+                </div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the import status.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('import_status', 'block_panopto');
+                    ?>
+                </div>
                 <?php
                 foreach ($importresults as $importresult) {
                     if (isset($importresult->errormessage)) {
                     ?>
                         <div class='value'>
-                            <?php echo get_string('import_error', 'block_panopto', $importresult) ?>
+                            <?php
+                            /**
+                             * Displays an error message for a failed import result.
+                             *
+                             * @package block_panopto
+                             * @copyright  Panopto 2009 - 2024
+                             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                             *
+                             * @param object $importresult Import result with an error message
+                             */
+                            echo get_string('import_error', 'block_panopto', $importresult);
+                            ?>
                         </div>
                         <?php
                     } else {
                     ?>
                         <div class='value'>
-                            <?php echo get_string('import_success', 'block_panopto', $importresult) ?>
+                            <?php
+                            /**
+                             * Displays a success message for a successful import result.
+                             *
+                             * @package block_panopto
+                             * @copyright  Panopto 2009 - 2024
+                             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                             *
+                             * @param object $importresult Import result without an error message
+                             */
+                            echo get_string('import_success', 'block_panopto', $importresult);
+                            ?>
                         </div>
                         <?php
                     }
@@ -56,12 +161,41 @@ defined('MOODLE_INTERNAL') || die();
             } else {
                 if ($targetpanopto === panopto_reinitialize::NO_COURSE_EXISTS) {
                     ?>
-                        <div class='errorMessage'><?php echo get_string('target_moodle_course_deleted', 'block_panopto') ?></div>
+                        <div class='errorMessage'>
+                            <?php
+                            /**
+                             * Displays an error message when the target Moodle course does not exist.
+                             *
+                             * @package block_panopto
+                             * @copyright  Panopto 2009 - 2024
+                             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                             */
+                            echo get_string('target_moodle_course_deleted', 'block_panopto');
+                            ?>
+                        </div>
                     <?php
                 } else {
                     ?>
-                        <div class='errorMessage'><?php echo get_string('target_invalid_panopto_data', 'block_panopto') ?></div>
+                        <div class='errorMessage'>
+                            <?php
+                            /**
+                             * Displays an error message for invalid Panopto data.
+                             *
+                             * @package block_panopto
+                             * @copyright  Panopto 2009 - 2024
+                             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                             */
+                            echo get_string('target_invalid_panopto_data', 'block_panopto');
+                            ?>
+                        </div>
                     <?php
+                    /**
+                     * Closing else/if/else condition.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
                 }
             }
             ?>

@@ -18,7 +18,7 @@
  * The provisioned course template
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2015
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -30,21 +30,87 @@ defined('MOODLE_INTERNAL') || die();
             <?php
             if ($unprovisionwassuccess && !empty($panoptodata) && !empty($unprovisioninginfo)) {
             ?>
-                <div class='attribute'><?php echo get_string('course_name', 'block_panopto') ?></div>
-                <div class='value'><?php echo $unprovisioninginfo->fullname ?></div>
-                <div class='attribute'><?php echo get_string('result', 'block_panopto') ?></div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the course name associated with the unprovisioning attempt.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('course_name', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the full name of the course that was successfully unprovisioned.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var string $unprovisioninginfo->fullname Course full name
+                     */
+                    echo $unprovisioninginfo->fullname;
+                    ?>
+                </div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the result of the unprovisioning process.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('result', 'block_panopto');
+                    ?>
+                </div>
                 <div class="value">
                     <div class='successMessage'>
-                        <?php echo get_string('unprovision_successful', 'block_panopto', $panoptodata->moodlecourseid) ?>
+                        <?php
+                        /**
+                         * Displays a success message indicating the course was successfully unprovisioned.
+                         *
+                         *
+                         * @package block_panopto
+                         * @copyright  Panopto 2009 - 2024
+                         * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                         *
+                         * @var int $panoptodata->moodlecourseid Moodle course ID for context in the message
+                         */
+                        echo get_string('unprovision_successful', 'block_panopto', $panoptodata->moodlecourseid);
+                        ?>
                     </div>
                 </div>
                 <?php
             } else {
-            ?>
-                <div class='errorMessage'><?php echo get_string('unprovision_error', 'block_panopto') ?></div>
+                ?>
+                <div class='errorMessage'>
+                    <?php
+                    /**
+                     * Displays an error message if the unprovisioning process was unsuccessful.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('unprovision_error', 'block_panopto');
+                    ?>
+                </div>
                 <?php
+                /**
+                 * Closing if/else condition.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
             }
             ?>
         </div>
     </div>
 </div>
+

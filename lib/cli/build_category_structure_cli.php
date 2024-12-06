@@ -57,7 +57,7 @@ cli_heading(get_string('cli_heading_build_category_structure', 'block_panopto'))
  */
 function build_panopto_category_structure($params) {
     if (!isset($params[1]) || !isset($params[2])) {
-        cli_writeln(get_string('cli_category_invalid_arguments', 'block_panopto'));
+        mtrace(get_string('cli_category_invalid_arguments', 'block_panopto'));
     } else {
         panopto_category_data::build_category_structure(false, $params[1], $params[2]);
     }

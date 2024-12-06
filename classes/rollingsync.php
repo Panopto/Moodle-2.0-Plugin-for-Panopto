@@ -114,7 +114,7 @@ class block_panopto_rollingsync {
                 'courseid' => $event->courseid,
                 'relateduserid' => $event->relateduserid,
                 'contextid' => $event->contextid,
-                'eventtype' => 'role'
+                'eventtype' => 'role',
             ]);
             $task->execute();
         }
@@ -161,6 +161,12 @@ class block_panopto_rollingsync {
 
             $panoptodata = new \panopto_data($newcourseid);
             $originalpanoptodata = new \panopto_data($originalcourseid);
+
+            // Enroll the user who initiated the copy action as a teacher in the new course.
+            if (!$panoptodata->has_enrolled_users($newcourseid)) {
+                $userid = $event->userid;
+                $panoptodata->enroll_user_as_teacher($userid, $newcourseid);
+            }
 
             // This is target or course where we are doing copy or import.
             $istargetcourseprovisioned =
@@ -278,7 +284,7 @@ class block_panopto_rollingsync {
         $task = new \block_panopto\task\sync_user();
         $task->set_custom_data([
             'courseid' => $event->courseid,
-            'userid' => $event->relateduserid
+            'userid' => $event->relateduserid,
         ]);
 
         if (get_config('block_panopto', 'async_tasks')) {
@@ -302,7 +308,7 @@ class block_panopto_rollingsync {
         $task = new \block_panopto\task\sync_user();
         $task->set_custom_data([
             'courseid' => $event->courseid,
-            'userid' => $event->relateduserid
+            'userid' => $event->relateduserid,
         ]);
 
         if (get_config('block_panopto', 'async_tasks')) {
@@ -327,7 +333,7 @@ class block_panopto_rollingsync {
             $task = new \block_panopto\task\sync_user();
             $task->set_custom_data([
                 'courseid' => $event->courseid,
-                'userid' => $event->relateduserid
+                'userid' => $event->relateduserid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
@@ -353,7 +359,7 @@ class block_panopto_rollingsync {
             $task = new \block_panopto\task\sync_user();
             $task->set_custom_data([
                 'courseid' => $event->courseid,
-                'userid' => $event->relateduserid
+                'userid' => $event->relateduserid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
@@ -379,7 +385,7 @@ class block_panopto_rollingsync {
 
             $task = new \block_panopto\task\sync_user_login();
             $task->set_custom_data([
-                'userid' => $event->userid
+                'userid' => $event->userid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
@@ -406,7 +412,7 @@ class block_panopto_rollingsync {
 
             $task = new \block_panopto\task\sync_user_login();
             $task->set_custom_data([
-                'userid' => $event->relateduserid
+                'userid' => $event->relateduserid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {

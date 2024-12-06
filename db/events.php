@@ -74,5 +74,5 @@ $observers = [
     [
         'eventname' => '\core\event\course_category_created',
         'callback' => 'block_panopto_categorytasks::coursecategorycreated',
-    ]
+    ],
 ];

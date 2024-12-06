@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * The sync user class for Panopto, syncs user permissions with Panopto server, called on unenrollment event.
  *

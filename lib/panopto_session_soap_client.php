@@ -183,7 +183,7 @@ class panopto_session_soap_client extends PanoptoTimeoutSoapClient {
         $rolestoensure = [
             "Viewer",
             "Creator",
-            "Publisher"
+            "Publisher",
         ];
         $rolelist = new SessionManagementStructArrayOfAccessRole($rolestoensure);
 
@@ -227,7 +227,7 @@ class panopto_session_soap_client extends PanoptoTimeoutSoapClient {
         $rolestoensure = [
             "Viewer",
             "Creator",
-            "Publisher"
+            "Publisher",
         ];
         $rolelist = new SessionManagementStructArrayOfAccessRole($rolestoensure);
 
@@ -272,7 +272,7 @@ class panopto_session_soap_client extends PanoptoTimeoutSoapClient {
         $rolestoensure = [
             "Viewer",
             "Creator",
-            "Publisher"
+            "Publisher",
         ];
         $rolelist = new SessionManagementStructArrayOfAccessRole($rolestoensure);
 

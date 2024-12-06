@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -27,18 +27,89 @@ defined('MOODLE_INTERNAL') || die();
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
         <div class='value'>
-            <?php
-            if (isset($branchinfo) && !empty($branchinfo)) {
-            ?>
-                <div class='attribute'><?php echo get_string('attribute_target_panopto_server', 'block_panopto') ?></div>
-                <div class='value'><?php echo $branchinfo['targetserver'] ?></div>
-                <div class='attribute'><?php echo get_string('attribute_target_branch_leaf', 'block_panopto') ?></div>
-                <div class='value'><?php echo $branchinfo['categoryname'] ?></div>
+            <?php if (isset($branchinfo) && !empty($branchinfo)) { ?>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the target Panopto server attribute.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('attribute_target_panopto_server', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the target Panopto server name for the category branch.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var string $branchinfo['targetserver'] Target server name
+                     */
+                    echo $branchinfo['targetserver'];
+                    ?>
+                </div>
+                <div class='attribute'>
+                    <?php
+                    /**
+                     * Displays the label for the target branch or category leaf attribute.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('attribute_target_branch_leaf', 'block_panopto');
+                    ?>
+                </div>
+                <div class='value'>
+                    <?php
+                    /**
+                     * Displays the category name (branch leaf) for the target Panopto branch.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     *
+                     * @var string $branchinfo['categoryname'] Category name
+                     */
+                    echo $branchinfo['categoryname'];
+                    ?>
+                </div>
                 <?php
+                /**
+                 * Wrapping else condition.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
             } else {
             ?>
-                <div class='errorMessage'><?php echo get_string('error_invalid_category_information', 'block_panopto') ?></div>
+                <div class='errorMessage'>
+                    <?php
+                    /**
+                     * Displays an error message for invalid or missing category information.
+                     *
+                     * @package block_panopto
+                     * @copyright  Panopto 2009 - 2024
+                     * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                     */
+                    echo get_string('error_invalid_category_information', 'block_panopto');
+                    ?>
+                </div>
                 <?php
+                /**
+                 * Closing else condition.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
             }
             ?>
             <br />

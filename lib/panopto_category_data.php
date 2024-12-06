@@ -217,7 +217,7 @@ class panopto_category_data {
 
             $panoptoversioninfo = [
                 'activepanoptoversion' => $this->activepanoptoserverversion,
-                'requiredpanoptoversion' => self::$categoriesrequiredpanoptoversion
+                'requiredpanoptoversion' => self::$categoriesrequiredpanoptoversion,
             ];
 
             if ($usehtmloutput) {
@@ -240,7 +240,7 @@ class panopto_category_data {
 
                 $branchinfo = [
                     'targetserver' => $this->servername,
-                    'categoryname' => $targetcategoryname
+                    'categoryname' => $targetcategoryname,
                 ];
 
                 if ($usehtmloutput) {
@@ -321,7 +321,7 @@ class panopto_category_data {
             'category_id' => null,
             'panopto_id' => null,
             'panopto_server' => $this->servername,
-            'panopto_app_key' => $this->applicationkey
+            'panopto_app_key' => $this->applicationkey,
         ];
 
         $ensuredbranch = '';
@@ -405,7 +405,7 @@ class panopto_category_data {
             'block_panopto_categorymap',
             [
                 'category_id' => $row->category_id,
-                'panopto_server' => $row->panopto_server
+                'panopto_server' => $row->panopto_server,
             ]
         );
 
