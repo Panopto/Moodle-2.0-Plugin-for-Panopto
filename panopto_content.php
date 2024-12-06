@@ -62,7 +62,7 @@ try {
 
         $task = new \block_panopto\task\provision_course();
         $task->set_custom_data([
-            'courseid' => $courseid
+            'courseid' => $courseid,
         ]);
 
         try {

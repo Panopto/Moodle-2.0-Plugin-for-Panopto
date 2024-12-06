@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -27,15 +27,45 @@ defined('MOODLE_INTERNAL') || die();
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
         <div class='warning'>
-            <?php echo get_string('bulk_task_rename_warning', 'block_panopto') ?>
+            <?php
+            /**
+             * Displays warning message about bulk task renaming.
+             *
+             * The message content is retrieved from language strings in the
+             * Panopto block plugin.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('bulk_task_rename_warning', 'block_panopto');
+            ?>
         </div>
         <br />
         <div class='warning'>
-            <?php echo get_string('bulk_task_rename_cli_command', 'block_panopto') ?>
+            <?php
+            /**
+             * Displays CLI command warning for bulk task renaming.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('bulk_task_rename_cli_command', 'block_panopto');
+            ?>
         </div>
         <br />
         <div class='warning'>
-            <?php echo get_string('bulk_task_contact_support', 'block_panopto') ?>
+            <?php
+            /**
+             * Displays support contact information for bulk task assistance.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('bulk_task_contact_support', 'block_panopto');
+            ?>
         </div>
     </div>
 </div>

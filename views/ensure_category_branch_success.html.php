@@ -18,13 +18,37 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 ?>
-            <div class='attribute'><?php echo get_string('attribute_ensured_branch', 'block_panopto') ?></div>
-            <div class='value'><?php echo $ensuredbranch ?></div>
+            <div class='attribute'>
+                <?php
+                /**
+                 * Displays the label for the ensured branch attribute.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
+                echo get_string('attribute_ensured_branch', 'block_panopto');
+                ?>
+            </div>
+            <div class='value'>
+                <?php
+                /**
+                 * Displays the ensured branch name or identifier.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 *
+                 * @var string $ensuredbranch The ensured branch name or identifier
+                 */
+                echo $ensuredbranch;
+                ?>
+            </div>
         </div>
     </div>
 </div>

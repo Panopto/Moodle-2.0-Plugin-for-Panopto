@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -27,26 +27,96 @@ defined('MOODLE_INTERNAL') || die();
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
         <div class='error'>
-            <?php echo get_string('bulk_task_version_error', 'block_panopto') ?>
+            <?php
+            /**
+             * Displays an error message regarding version compatibility.
+             * The message is retrieved from the Panopto block language strings.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('bulk_task_version_error', 'block_panopto');
+            ?>
         </div>
         <div class="alert alert-error alert-block">
             <div class="attribute">
-                <?php echo get_string('impacted_server_attr', 'block_panopto') ?>
+                <?php
+                /**
+                 * Displays the label for the impacted server attribute.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
+                echo get_string('impacted_server_attr', 'block_panopto');
+                ?>
             </div>
             <div class='value'>
-                <?php echo $oldpanoptocourse->panopto->servername?>
+                <?php
+                /**
+                 * Displays the server name of the impacted Panopto course.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 *
+                 * @var string $oldpanoptocourse->panopto->servername Server name
+                 */
+                echo $oldpanoptocourse->panopto->servername;
+                ?>
             </div>
             <div class="attribute">
-                <?php echo get_string('minimum_required_version_attr', 'block_panopto') ?>
+                <?php
+                /**
+                 * Displays the label for the minimum required Panopto version attribute.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
+                echo get_string('minimum_required_version_attr', 'block_panopto');
+                ?>
             </div>
             <div class='value'>
-                <?php echo \panopto_data::$requiredpanoptoversion ?>
+                <?php
+                /**
+                 * Displays the minimum required Panopto version for compatibility.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 *
+                 * @var string \panopto_data::$requiredpanoptoversion Required version
+                 */
+                echo \panopto_data::$requiredpanoptoversion;
+                ?>
             </div>
             <div class="attribute">
-                <?php echo get_string('current_version_attr', 'block_panopto') ?>
+                <?php
+                /**
+                 * Displays the label for the current Panopto version attribute.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 */
+                echo get_string('current_version_attr', 'block_panopto');
+                ?>
             </div>
             <div class='value'>
-                <?php echo $activepanoptoserverversion ?>
+                <?php
+                /**
+                 * Displays the active Panopto server version.
+                 *
+                 * @package block_panopto
+                 * @copyright  Panopto 2009 - 2024
+                 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+                 *
+                 * @var string $activepanoptoserverversion Active server version
+                 */
+                echo $activepanoptoserverversion;
+                ?>
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@ class panoptoblock_lti_utility {
         $targetservername = self::get_target_server_name($courseid);
         $ltitooltypes = !empty($targetservername)
             ? $DB->get_records('lti_types', ['tooldomain' => $targetservername], 'name')
-            : $DB->get_records('lti_types', null, 'name');
+            : self::get_filtered_lti_tool_types();
 
         $idmatches = [];
         foreach ($ltitooltypes as $type) {
@@ -89,7 +89,7 @@ class panoptoblock_lti_utility {
         $targetservername = self::get_target_server_name($courseid);
         $ltitooltypes = !empty($targetservername)
             ? $DB->get_records('lti_types', ['tooldomain' => $targetservername], 'name')
-            : $DB->get_records('lti_types', null, 'name');
+            : self::get_filtered_lti_tool_types();
 
         $urlmatches = [];
         foreach ($ltitooltypes as $type) {
@@ -421,21 +421,10 @@ class panoptoblock_lti_utility {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
-        $targetservername = null;
-
-        $blockexists = $DB->get_record('block', ['name' => 'panopto'], 'name');
-        if (!empty($blockexists)) {
-            $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $courseid]);
-        }
-
-        // If the course if not provisioned with the Panopto block then get the default panopto server fqdn.
-        if (empty($targetservername)) {
-            $targetservername = get_config('block_panopto', 'automatic_operation_target_server');
-        }
-
+        $targetservername = self::get_target_server_name($courseid);
         $ltitooltypes = !empty($targetservername)
             ? $DB->get_records('lti_types', ['tooldomain' => $targetservername], 'name')
-            : $DB->get_records('lti_types', null, 'name');
+            : self::get_filtered_lti_tool_types();
 
         $idmatches = [];
         foreach ($ltitooltypes as $type) {
@@ -728,7 +717,7 @@ class panoptoblock_lti_utility {
     public static function is_active_user_enrolled($targetcontext) {
         global $USER;
 
-        return is_enrolled($targetcontext, $USER, 'mod/assignment:submit');
+        return is_enrolled($targetcontext, $USER, 'mod/assign:submit');
     }
 
     /**
@@ -743,16 +732,52 @@ class panoptoblock_lti_utility {
 
         $targetservername = null;
 
+        // Check if the Panopto block exists for the course.
         $blockexists = $DB->get_record('block', ['name' => 'panopto'], 'name');
         if (!empty($blockexists)) {
+            // Get the targeted server associated with the course if provisioned.
             $targetservername = $DB->get_field('block_panopto_foldermap', 'panopto_server', ['moodleid' => $courseid]);
         }
 
-        // If the course if not provisioned with the Panopto block then get the default panopto server fqdn.
+        // If we still don't have a target server, get the automatic_operation_target_server value from the block config.
+        if (empty($targetservername)) {
+            $targetservername = get_config('block_panopto', 'automatic_operation_target_server');
+        }
+
+        // If the course is not provisioned with the Panopto block, retrieve the default Panopto server FQDN.
         if (empty($targetservername)) {
             $targetservername = get_config('mod_panoptocourseembed', 'default_panopto_server');
         }
 
         return $targetservername;
+    }
+
+    /**
+     * Return filtered lti tool types
+     * @return mixed
+     */
+    private static function get_filtered_lti_tool_types() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $sql = "
+            SELECT *
+            FROM {lti_types} lt
+            WHERE lt.state = :state
+            AND (
+                lt.baseurl LIKE :panopto_com_pattern
+                OR lt.baseurl LIKE :panopto_eu_pattern
+            )";
+
+        // Since we don't have the target server, use the base URL for filtering purposes.
+        $params = [
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'panopto_com_pattern' => '%.panopto.com%',
+            'panopto_eu_pattern' => '%.panopto.eu%',
+        ];
+
+        $tooltypes = $DB->get_records_sql($sql, $params);
+
+        return $tooltypes;
     }
 }

@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -26,11 +26,83 @@ defined('MOODLE_INTERNAL') || die();
 
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
-        <div class='attribute'><?php echo get_string('attempted_target_course_id', 'block_panopto') ?></div>
-        <div class='value'><?php echo $currentfoldernamecontainer->moodleid ?></div>
-        <div class='attribute'><?php echo get_string('attribute_original_name', 'block_panopto') ?></div>
-        <div class='value'><?php echo $currentfoldernamecontainer->oldname ?></div>
-        <div class='attribute'><?php echo get_string('attribute_new_name', 'block_panopto') ?></div>
-        <div class='value'><?php echo $currentfoldernamecontainer->newname ?></div>
+        <div class='attribute'>
+            <?php
+            /**
+             * Displays label for the attempted target course ID.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('attempted_target_course_id', 'block_panopto');
+            ?>
+        </div>
+        <div class='value'>
+            <?php
+            /**
+             * Displays the Moodle ID of the target course for the attempted folder rename.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @var int $currentfoldernamecontainer->moodleid Target course Moodle ID
+             */
+            echo $currentfoldernamecontainer->moodleid;
+            ?>
+        </div>
+        <div class='attribute'>
+            <?php
+            /**
+             * Displays label for the original folder name attribute.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('attribute_original_name', 'block_panopto');
+            ?>
+        </div>
+        <div class='value'>
+            <?php
+            /**
+             * Displays the original name of the folder before the rename attempt.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @var string $currentfoldernamecontainer->oldname Original folder name
+             */
+            echo $currentfoldernamecontainer->oldname;
+            ?>
+        </div>
+        <div class='attribute'>
+            <?php
+            /**
+             * Displays label for the new folder name attribute.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('attribute_new_name', 'block_panopto');
+            ?>
+        </div>
+        <div class='value'>
+            <?php
+            /**
+             * Displays the new name of the folder after the rename attempt.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @var string $currentfoldernamecontainer->newname New folder name
+             */
+            echo $currentfoldernamecontainer->newname;
+            ?>
+        </div>
     </div>
 </div>

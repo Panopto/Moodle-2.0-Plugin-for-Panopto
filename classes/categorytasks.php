@@ -57,7 +57,7 @@ class block_panopto_categorytasks {
 
             $task = new \block_panopto\task\ensure_category();
             $task->set_custom_data([
-                'categoryid' => $event->contextinstanceid
+                'categoryid' => $event->contextinstanceid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {
@@ -83,7 +83,7 @@ class block_panopto_categorytasks {
 
             $task = new \block_panopto\task\ensure_category();
             $task->set_custom_data([
-                'categoryid' => $event->contextinstanceid
+                'categoryid' => $event->contextinstanceid,
             ]);
 
             if (get_config('block_panopto', 'async_tasks')) {

@@ -50,7 +50,7 @@ cli_heading(get_string('bulk_remove_all_adhoc_task', 'block_panopto'));
 function remove_panopto_adhoc_tasks() {
     \panopto_data::remove_all_panopto_adhoc_tasks();
 
-    cli_writeln(get_string('removed_panopto_adhoc_tasks', 'block_panopto'));
+    mtrace(get_string('removed_panopto_adhoc_tasks', 'block_panopto'));
 }
 
 

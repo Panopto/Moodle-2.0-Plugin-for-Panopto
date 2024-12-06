@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -27,9 +27,46 @@ defined('MOODLE_INTERNAL') || die();
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
         <div class='error'>
-            <?php echo get_string('bulk_rename_single_failed', 'block_panopto', $currentfoldernamecontainer->moodleid) ?>
+            <?php
+            /**
+             * Displays an error message for a failed single bulk rename task.             *
+             * Retrieves error message from language strings in the Panopto block
+             * plugin, substituting the moodleid of the current folder name container.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @param int $currentfoldernamecontainer->moodleid Moodle ID of the folder
+             */
+            echo get_string('bulk_rename_single_failed', 'block_panopto', $currentfoldernamecontainer->moodleid);
+            ?>
         </div>
-        <div class='attribute'><?php echo get_string('attribute_original_name', 'block_panopto') ?></div>
-        <div class='value'><?php echo $currentfoldernamecontainer->oldname ?></div>
+        <div class='attribute'>
+            <?php
+            /**
+             * Displays the label for the original folder name attribute.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             */
+            echo get_string('attribute_original_name', 'block_panopto');
+            ?>
+        </div>
+        <div class='value'>
+            <?php
+            /**
+             * Displays the original name of the folder before the rename attempt.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @var string $currentfoldernamecontainer->oldname Original folder name
+             */
+            echo $currentfoldernamecontainer->oldname;
+            ?>
+        </div>
     </div>
 </div>

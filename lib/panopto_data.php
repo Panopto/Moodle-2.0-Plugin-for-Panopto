@@ -31,6 +31,7 @@ if (empty($CFG)) {
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/dmllib.php');
 require_once($CFG->libdir .'/filelib.php');
+require_once(dirname(__FILE__) . '/lti/panoptoblock_lti_utility.php');
 require_once(dirname(__FILE__) . '/block_panopto_lib.php');
 require_once(dirname(__FILE__) . '/panopto_category_data.php');
 require_once(dirname(__FILE__) . '/panopto_auth_soap_client.php');
@@ -139,7 +140,7 @@ class panopto_data {
         return [
             'fullname' => get_string('name_style_fullname', 'block_panopto'),
             'shortname' => get_string('name_style_shortname', 'block_panopto'),
-            'combination' => get_string('name_style_combination', 'block_panopto')
+            'combination' => get_string('name_style_combination', 'block_panopto'),
         ];
     }
     /**
@@ -151,7 +152,7 @@ class panopto_data {
         return [
             'off' => get_string('autoprovision_off', 'block_panopto'),
             'oncoursecreation' => get_string('autoprovision_new_courses', 'block_panopto'),
-            'onblockview' => get_string('autoprovision_on_block_view', 'block_panopto')
+            'onblockview' => get_string('autoprovision_on_block_view', 'block_panopto'),
         ];
     }
     /**
@@ -174,7 +175,7 @@ class panopto_data {
         return [
             'nosync' => get_string('sso_type_nosync', 'block_panopto'),
             'sync' => get_string('sso_type_sync', 'block_panopto'),
-            'asyncsync' => get_string('sso_type_asyncsync', 'block_panopto')
+            'asyncsync' => get_string('sso_type_asyncsync', 'block_panopto'),
         ];
     }
 
@@ -722,7 +723,7 @@ class panopto_data {
                 'CURLOPT_RETURNTRANSFER' => true,
                 'CURLOPT_HEADER' => false,
                 'CURLOPT_HTTPHEADER' => ['Content-Type: application/json',
-                                              'Cookie: .ASPXAUTH='.$aspxauthcookie]
+                                              'Cookie: .ASPXAUTH='.$aspxauthcookie],
             ];
 
             $sockettimeout = get_config('block_panopto', 'panopto_socket_timeout');
@@ -1357,7 +1358,7 @@ class panopto_data {
             'moodleid' => $moodlecourseid,
             'panopto_id' => $sessiongroupid,
             'panopto_server' => $servername,
-            'panopto_app_key' => $appkey
+            'panopto_app_key' => $appkey,
         ];
 
         $oldrecord = $DB->get_record('block_panopto_foldermap', ['moodleid' => $moodlecourseid]);
@@ -1737,7 +1738,7 @@ class panopto_data {
             $curl = new \curl();
             $options = [
                 'CURLOPT_TIMEOUT' => get_config('block_panopto', 'panopto_socket_timeout'),
-                'CURLOPT_CONNECTTIMEOUT' => get_config('block_panopto', 'panopto_connection_timeout')
+                'CURLOPT_CONNECTTIMEOUT' => get_config('block_panopto', 'panopto_connection_timeout'),
             ];
             $curl->get($url, null, $options);
             $httpcode = !empty($curl->get_info()['http_code']) ? $curl->get_info()['http_code'] : 'Not found.';
@@ -1872,7 +1873,7 @@ class panopto_data {
         $logmessage = substr($logmessage, 0, self::$maxloglength);
 
         if (CLI_SCRIPT) {
-            cli_writeln($logmessage);
+            mtrace($logmessage);
         } else {
             if (get_config('block_panopto', 'print_log_to_file')) {
                 $currenttime = time();
@@ -1907,5 +1908,57 @@ class panopto_data {
             self::print_log($logmessage);
         }
     }
+
+    /**
+     * Checks if the course has any enrolled users.
+     *
+     * @param panopto_data $courseid The copied course for which we need to check enrollment.
+     * @return bool True if there are enrolled users, false otherwise.
+     */
+    public function has_enrolled_users($courseid) {
+        $coursecontext = context_course::instance($courseid);
+        $enrolledusers = get_enrolled_users($coursecontext);
+        return !empty($enrolledusers);
+    }
+
+    /**
+     * Enrolls a specific user as a teacher in a given course.
+     *
+     * This method retrieves the manual enrolment instance for the specified course
+     * and assigns the user the "editing teacher" role if it exists.
+     *
+     * @param int $userid The ID of the user to enroll.
+     * @param int $newcourseid The ID of the course where the user will be enrolled.
+     */
+    public function enroll_user_as_teacher($userid, $newcourseid) {
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/accesslib.php');
+        require_once($CFG->libdir . '/enrollib.php');
+
+        // Retrieve the manual enrolment instance for the new course.
+        $instances = enrol_get_instances($newcourseid, true);
+        $manualinstance = null;
+        foreach ($instances as $instance) {
+            if ($instance->enrol === 'manual') {
+                $manualinstance = $instance;
+                break;
+            }
+        }
+
+        if (!$manualinstance) {
+            self::print_log('ERROR: No manual enrolment method in the new course.');
+            return;
+        }
+
+        // Retrieve the editing teacher role ID.
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        if (!$teacherroleid) {
+            self::print_log('ERROR: Teacher role not found during enroll_user_as_teacher');
+            return;
+        }
+
+        // Enroll the specified user as a teacher in the new course.
+        $enrolplugin = enrol_get_plugin('manual');
+        $enrolplugin->enrol_user($manualinstance, $userid, $teacherroleid);
+    }
 }
-/* End of file panopto_data.php */

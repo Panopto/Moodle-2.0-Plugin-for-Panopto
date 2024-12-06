@@ -18,7 +18,7 @@
  * The template used to display when we begin processing
  *
  * @package block_panopto
- * @copyright  Panopto 2009 - 2017
+ * @copyright  Panopto 2009 - 2024
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
@@ -27,7 +27,20 @@ defined('MOODLE_INTERNAL') || die();
 <div class='block_panopto'>
     <div class='panoptoProcessInformation'>
         <div class='error'>
-            <?php echo get_string('bulk_task_access_error', 'block_panopto', $targetuser) ?>
+            <?php
+            /**
+             * Displays an access error message for a bulk task in the Panopto block.             *
+             * Retrieves the error message from language strings in the Panopto block plugin,
+             * substituting the target user's information.
+             *
+             * @package block_panopto
+             * @copyright  Panopto 2009 - 2024
+             * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+             *
+             * @param string $targetuser Username or user ID involved in the access error
+             */
+            echo get_string('bulk_task_access_error', 'block_panopto', $targetuser);
+            ?>
         </div>
     </div>
 </div>
