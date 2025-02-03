@@ -216,7 +216,7 @@ class panopto_data {
         }
 
         if (isset($USER->username)) {
-            $username = $USER->username;
+            $username = panopto_convert_user_to_send($USER);
         } else {
             $username = 'guest';
         }
@@ -1110,7 +1110,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $panoptouser = $this->usermanager->get_user_by_key($userkey);
@@ -1127,7 +1127,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $result = $this->usermanager->delete_users($userids);
@@ -1148,7 +1148,7 @@ class panopto_data {
         global $USER;
 
         if (!empty($this->servername) && !empty($this->applicationkey)) {
-            $this->ensure_user_manager($USER->username);
+            $this->ensure_user_manager(panopto_convert_user_to_send($USER));
         }
 
         $result = $this->usermanager->update_contact_info(
